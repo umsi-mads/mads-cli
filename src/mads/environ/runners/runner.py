@@ -61,3 +61,16 @@ class Runner(BaseSettings, ABC):
         if not v:
             return None
         return v.split("/")[-1].replace(".git", "")
+
+    @property
+    def trigger_description(self) -> str:
+        """Return a description of what triggered this run"""
+
+        if self.event is None:
+            return "Manual Trigger"
+        elif self.event == "push":
+            return f"Push to {self.ref}"
+        elif self.event == "pull_request":
+            return f"Pull Request: #{self.head_ref} -> #{self.base_ref}"
+        else:
+            return self.event
