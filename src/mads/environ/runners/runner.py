@@ -7,6 +7,7 @@ CI runner entirely.
 
 from abc import ABC, abstractmethod
 from pydantic import BaseSettings, validator
+from mads.lib.classproperty import classproperty
 
 
 class Runner(BaseSettings, ABC):
@@ -41,7 +42,7 @@ class Runner(BaseSettings, ABC):
         super().__init_subclass__(**kwargs)
         Runner._runners.append(cls)
 
-    @classmethod
+    @classproperty
     def current(cls):
         """Return an instance of the current runner"""
         for runner in cls._runners:

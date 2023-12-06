@@ -5,7 +5,7 @@ Helpers for interacting with Docker.
 import os
 import base64
 import boto3
-from mads.environ import Git, CodeBuild
+from mads.environ import Git, Runner
 from .shell import proc
 
 
@@ -17,8 +17,12 @@ def host() -> str:
     if os.environ.get("IMAGE_HOST"):
         return os.environ["IMAGE_HOST"]
 
-    codebuild = CodeBuild()
-    return f"{codebuild.account_id}.dkr.ecr.{codebuild.region}.amazonaws.com"
+    runner = Runner.current()
+
+    if runner.name == "codebuild":
+        return f"{runner.account_id}.dkr.ecr.{runner.region}.amazonaws.com"
+
+    raise RuntimeError("Unable to determine the Docker host.")
 
 
 def start() -> bool:

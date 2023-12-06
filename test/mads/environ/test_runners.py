@@ -15,16 +15,16 @@ def env():
 
 def test_runner_selects_github(env):
     env["GITHUB_ACTIONS"] = "true"
-    assert Runner.current() == GitHubActions
+    assert Runner.current == GitHubActions
 
 
 def test_runner_selects_codebuild(env):
     env["CODEBUILD_BUILD_ID"] = "123"
-    assert Runner.current() == CodeBuild
+    assert Runner.current == CodeBuild
 
 
 def test_runner_selects_local():
-    assert Runner.current() == LocalRunner
+    assert Runner.current == LocalRunner
 
 
 def test_local_runner():
