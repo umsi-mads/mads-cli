@@ -62,7 +62,11 @@ def token(
     if secret_id:
         app_id, installation_id, private_key = aws_private_key(secret_id)
 
-    assert app_id and installation_id and private_key, "Missing GitHub app credentials"
+    here = locals()
+    missing = [
+        key for key in ["app_id", "installation_id", "private_key"] if not here[key]
+    ]
+    assert len(missing) == 0, f"Missing GitHub app credentials: {missing}"
 
     payload = {
         "iat": int(time.time()),

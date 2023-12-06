@@ -13,6 +13,7 @@ dependencies = [
   "psutil",
   "pyjwt",
   "ruamel.yaml",
+  "cryptography",
 ]
 
 [project.scripts]

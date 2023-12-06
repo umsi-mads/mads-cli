@@ -7,6 +7,7 @@ from . import (
     github,
     kube,
     setup,
+    yq,
 )
 
 __all__ = [
@@ -14,4 +15,5 @@ __all__ = [
     "github",
     "kube",
     "setup",
+    "yq",
 ]
