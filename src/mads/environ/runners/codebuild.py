@@ -1,13 +1,22 @@
 """Information about the Codebuild environment."""
 
+import os
 from typing import Union
 
-from pydantic import BaseSettings, validator
+from pydantic import Field
+from .runner import Runner
 
 
-class CodeBuild(BaseSettings):
+class CodeBuild(Runner):
     """Information provided by Codebuild."""
 
+    # Required fields that differ from parent class
+    name: str = "codebuild"
+    repo: str = Field(env="codebuild_source_repo_url")
+    run_id: str = Field(env="codebuild_build_id")
+    ref: str = Field(env="codebuild_source_version")
+
+    # Optional fields that differ from parent class
     initiator: str = ""
     build_id: str = ""
     build_arn: str = ""
@@ -16,11 +25,11 @@ class CodeBuild(BaseSettings):
     webhook_head_ref: str = ""
     webhook_base_ref: str = ""
 
-    class Config:
-        """Change behavior of the codebuild config class"""
+    @classmethod
+    def detect(cls) -> bool:
+        """Detect if we're running in Codebuild"""
 
-        # When loading in values from the environment, they will all be prefixed
-        env_prefix = "codebuild_"
+        return "CODEBUILD_BUILD_ID" in os.environ
 
     @property
     def account_id(self) -> str:
@@ -33,12 +42,12 @@ class CodeBuild(BaseSettings):
         return self.build_arn.split(":")[3]
 
     @property
-    def base(self) -> str:
+    def base_ref(self) -> str:
         """Return just the name of the base ref"""
         return self.webhook_base_ref.replace("refs/heads/", "")
 
     @property
-    def head(self) -> str:
+    def head_ref(self) -> str:
         """Return just the name of the head ref"""
         return self.webhook_head_ref.replace("refs/heads/", "")
 
@@ -61,17 +70,16 @@ class CodeBuild(BaseSettings):
     def branch(self) -> Union[str, None]:
         """Get the current git branch."""
 
-        if self.head and self.base:
-            return f"{self.head} -> {self.base}"
+        if self.head_ref and self.base_ref:
+            return f"{self.head_ref} -> {self.base_ref}"
 
-        if self.head:
-            return self.head
+        if self.head_ref:
+            return self.head_ref
 
         return None
 
-    @validator("base", check_fields=False)
-    def must_come_from_dev(cls, base, values):
-        """Reject pull requests that we don't allow."""
+    class Config:
+        """Change behavior of the codebuild config class"""
 
-        if base in ["master", "main"] and values["head"] != "dev":
-            raise RuntimeError()
+        # When loading in values from the environment, they will all be prefixed
+        env_prefix = "codebuild_"
