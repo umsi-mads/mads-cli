@@ -11,4 +11,9 @@ def main(argv=sys.argv[1:]):
     """The CLI interface for MADS builds"""
 
     parsed = parser.parse_args(argv)
+
+    if hasattr(parsed, "verbose"):
+        # TODO: Lower log level
+        del parsed.__dict__["verbose"]
+
     parsed.func(parsed)
