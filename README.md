@@ -55,14 +55,11 @@ example,
 fizz = "mypackage.fizzbuzz"
 ```
 
-The name (in this case "course") is currently ignored.
-
+The subcommand will use the entrypoint name, in this case `fizz`.
 
 ### The Module
 
 The module and its metadata is used to set up your subcommand.
-
-The name of the subcommand is `module.__name__.split(".")[-1]`.
 
 The "help" description of the subcommand is either `mod.__doc__` or `mod.help`.
 
@@ -98,11 +95,11 @@ def register_subcommand(parser: argparse.ArgumentParser):
             print("")
 ```
 
-This code will install the `fizzbuzz` subcommand with a usage doc that looks
+This code will install the `fizz` subcommand with a usage doc that looks
 like the following:
 
 ```
-usage: mads fizzbuzz [-h] {run} ...
+usage: mads fizz [-h] {run} ...
 
 options:
   -h, --help  show this help message and exit
