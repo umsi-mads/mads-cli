@@ -67,8 +67,8 @@ for entrypoint in metadata.entry_points(group="mads-cli"):
     try:
         mod = entrypoint.load()
         register_module_as_subcommand(name, mod, subcommands)
-    except Exception:
-        print("Problem importing entrypoint", entrypoint, file=sys.stderr)
+    except Exception as err:
+        print(f"Problem importing entrypoint {entrypoint}: {err}", file=sys.stderr)
         continue
 
 # Load all the built in commands
