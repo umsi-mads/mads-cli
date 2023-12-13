@@ -12,7 +12,6 @@ from pathlib import Path
 
 from ruamel.yaml import YAML
 from ghapi.all import GhApi
-import boto3
 
 from .logging import log
 from .shell import shell
@@ -35,13 +34,13 @@ class CheckState(str, Enum):
     FINISHED = "finished"
 
 
-secrets = boto3.client("secretsmanager")
-
-
 @cache
 def aws_private_key(secret_id: str) -> Tuple[int, int, str]:
     """Load the GitHub private key from secrets manager."""
 
+    import boto3
+
+    secrets = boto3.client("secretsmanager")
     secret = secrets.get_secret_value(SecretId=secret_id)
     data = YAML(typ="safe").load(secret["SecretString"])
     return (
