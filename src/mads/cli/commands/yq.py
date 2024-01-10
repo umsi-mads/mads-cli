@@ -13,15 +13,21 @@ def dotget(item: Any, key: str) -> Any | None:
     Supports nested keys using dot notation.
     """
     keys = key.split(".")
-    return reduce(
-        lambda current, next_key: (
-            current.get(next_key, None)
-            if hasattr(current, "get")
-            else getattr(current, str(next_key), None)
-        ),
-        keys,
-        item,
-    )
+
+    def get(current, next_key):
+        if next_key == "":
+            return current
+        if hasattr(current, "get"):
+            return current.get(next_key, None)
+        if hasattr(current, str(next_key)):
+            return getattr(current, str(next_key), None)
+        if hasattr(current, "__getitem__"):
+            if isinstance(current, list) and next_key.isdigit():
+                return current[int(next_key)]
+            return current[next_key]
+        return None
+
+    return reduce(get, keys, item)
 
 
 def register_subcommand(parser: argparse.ArgumentParser):
