@@ -11,7 +11,8 @@ import select
 import subprocess
 from pathlib import Path
 
-from .logging import log, LSS_END
+from . import log
+from .logging import LSS_END
 
 BUILD_ROOT = Path(".").resolve()
 

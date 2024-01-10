@@ -3,8 +3,14 @@ The CLI interface for MADS builds.
 """
 
 import sys
+from argparse import Namespace
 
 from .args import parser
+
+runtime = Namespace(
+    verbose=False,
+    output=None,
+)
 
 
 def main(argv=sys.argv[1:]):
@@ -13,7 +19,9 @@ def main(argv=sys.argv[1:]):
     parsed = parser.parse_args(argv)
 
     if hasattr(parsed, "verbose"):
-        # TODO: Lower log level
-        del parsed.__dict__["verbose"]
+        runtime.verbose = parsed.__dict__.pop("verbose")
+
+    if hasattr(parsed, "output"):
+        runtime.output = parsed.__dict__.pop("output")
 
     parsed.func(parsed)

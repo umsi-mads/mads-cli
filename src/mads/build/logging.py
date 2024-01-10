@@ -2,12 +2,13 @@
 Configure logging for the build and define helper functions.
 """
 
-import sys
 import time
 import logging
 from typing import List, Union
 from pathlib import Path
 from datetime import datetime, timedelta
+from rich.logging import RichHandler
+
 
 LSS_START = "┌"
 LSS_END = "└"
@@ -135,7 +136,7 @@ class BuildLogger(logging.LoggerAdapter):
         return wrapper
 
 
-def init_logging() -> BuildLogger:
+def new_logger() -> BuildLogger:
     """Set up exec environment, namely logging."""
 
     # Reset both loggers
@@ -148,16 +149,16 @@ def init_logging() -> BuildLogger:
     # Add a null handler to prevent it from being populated automatically
     root.addHandler(logging.NullHandler())
 
+    fmt = logging.Formatter(fmt="%(message)s", datefmt="%H:%M:%S")
+
     # Set up the handlers we want to use
-    fmt = logging.Formatter(
-        fmt="[%(asctime)s.%(msecs)03d] %(message)s", datefmt="%H:%M:%S"
-    )
-    cout = logging.StreamHandler(stream=sys.stderr)
-    fout = logging.FileHandler(LOG_FILE)
+    handlers: list[logging.Handler] = [
+        RichHandler(show_level=False, show_path=False),
+    ]
 
     # Configure our logger with those handlers
     mlog.setLevel(logging.DEBUG)
-    for out in [cout, fout]:
+    for out in handlers:
         out.setFormatter(fmt)
         out.setLevel(logging.DEBUG)
         mlog.addHandler(out)
@@ -165,7 +166,7 @@ def init_logging() -> BuildLogger:
     return BuildLogger(mlog)
 
 
-log = init_logging()
+log = new_logger()
 
 
 def human_size(nbytes: float | int) -> str:
