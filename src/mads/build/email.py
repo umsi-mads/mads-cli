@@ -65,6 +65,10 @@ def send_email(**kwargs):
 def deliver_email(message: EmailMessage):
     """Deliver a constructed email via SES."""
 
+    if not SES_SEND_IDENTITY:
+        log.warning("No $SES_SEND_IDENTITY set. Skipping email delivery.")
+        return
+
     client = boto3.client("ses")
     res = client.send_raw_email(
         Source=SES_SEND_IDENTITY,
