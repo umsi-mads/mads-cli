@@ -35,6 +35,8 @@ class Runner(BaseSettings, ABC):
     head_ref: str | None = None
     base_ref: str | None = None
 
+    url: str | None = None
+
     _runners = []
 
     # Save a list of all subclasses so we can detect which one we're running in
