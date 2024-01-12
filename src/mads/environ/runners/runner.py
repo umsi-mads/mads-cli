@@ -35,7 +35,9 @@ class Runner(BaseSettings, ABC):
     head_ref: str | None = None
     base_ref: str | None = None
 
-    url: str | None = None
+    @property
+    def url(self) -> str | None:
+        pass
 
     _runners = []
 

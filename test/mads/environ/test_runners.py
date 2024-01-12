@@ -53,6 +53,10 @@ def test_github_actions(env):
     assert runner.repo == "mads-cli"
     assert runner.ref == "main"
     assert runner.event == "push"
+    assert (
+        runner.url
+        == "https://github.com/umsi-mads/mads-cli/actions/runs/123/attempts/1"
+    )
 
 
 # def test_codebuild():
