@@ -8,12 +8,15 @@ from typing import List, Union
 from pathlib import Path
 from datetime import datetime, timedelta
 from rich.logging import RichHandler
+from rich.console import Console
 
 
 LSS_START = "┌"
 LSS_END = "└"
 LOG_FILE = Path("build-log.txt")
 DATA_SUFFIXES = ["B", "KB", "MB", "GB", "TB", "PB"]
+
+console = Console(stderr=True)
 
 
 class BuildLogger(logging.LoggerAdapter):
@@ -153,7 +156,7 @@ def new_logger() -> BuildLogger:
 
     # Set up the handlers we want to use
     handlers: list[logging.Handler] = [
-        RichHandler(show_level=False, show_path=False),
+        RichHandler(console=console, show_level=False, show_path=False),
     ]
 
     # Configure our logger with those handlers
