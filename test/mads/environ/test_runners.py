@@ -1,16 +1,4 @@
-import os
-import pytest
 from mads.environ.runners import LocalRunner, GitHubActions, CodeBuild, Runner
-
-
-@pytest.fixture
-def env():
-    """Fixture to reset the environment before tests"""
-
-    orig = os.environ.copy()
-    yield os.environ
-    os.environ.clear()
-    os.environ.update(orig)
 
 
 def test_runner_selects_github(env):
