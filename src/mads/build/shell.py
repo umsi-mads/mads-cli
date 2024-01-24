@@ -85,7 +85,7 @@ def _stream_process(cmd, **kwargs):
             # Select will return a list of only files ready to read from
             ready, _, _ = select.select(outputs, [], [], 0.0001)
             for stream in ready:
-                lines = [line.strip() for line in stream.readlines()]
+                lines = [line.rstrip() for line in stream.readlines()]
                 for line in lines:
                     if stream == process.stdout:
                         log.info("  %s", line)
