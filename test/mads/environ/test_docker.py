@@ -17,6 +17,16 @@ def test_docker_default(env):
     assert docker.cache_from is None
 
 
+def test_docker_buildx(env):
+    """Test the Docker configuration detects buildx"""
+
+    env["DOCKER_CONFIG"] = "/tmp/docker"
+    docker = Docker()
+
+    # False because it doesn't exist
+    assert docker.buildx is False
+
+
 def test_docker_paths(env):
     """Test the Docker configuration with paths"""
 
