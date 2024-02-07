@@ -61,7 +61,7 @@ def register_module_as_subcommand(
 
 
 # Look for any plugins via entry points
-for entrypoint in metadata.entry_points(group="mads-cli"):
+for entrypoint in metadata.entry_points(group="mads_cli"):
     name = entrypoint.name
 
     try:
