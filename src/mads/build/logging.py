@@ -2,21 +2,28 @@
 Configure logging for the build and define helper functions.
 """
 
+import sys
 import time
 import logging
 from typing import List, Union
 from pathlib import Path
 from datetime import datetime, timedelta
-from rich.logging import RichHandler
-from rich.console import Console
 
+from mads.environ import InOut
 
 LSS_START = "┌"
 LSS_END = "└"
 LOG_FILE = Path("build-log.txt")
 DATA_SUFFIXES = ["B", "KB", "MB", "GB", "TB", "PB"]
 
-console = Console(stderr=True)
+io = InOut()
+console = None
+
+if io.is_terminal:
+    from rich.logging import RichHandler
+    from rich.console import Console
+
+    console = Console(stderr=True)
 
 
 class BuildLogger(logging.LoggerAdapter):
@@ -152,12 +159,17 @@ def new_logger() -> BuildLogger:
     # Add a null handler to prevent it from being populated automatically
     root.addHandler(logging.NullHandler())
 
-    fmt = logging.Formatter(fmt="%(message)s", datefmt="%H:%M:%S")
-
     # Set up the handlers we want to use
-    handlers: list[logging.Handler] = [
-        RichHandler(console=console, show_level=False, show_path=False),
-    ]
+    handlers: list[logging.Handler] = []
+
+    fmtstr = "%(asctime)s %(message)s"
+    if io.is_terminal:
+        fmtstr = "%(message)s"
+        handlers.append(RichHandler(console=console, show_level=False, show_path=False))
+    else:
+        handlers.append(logging.StreamHandler(sys.stdout))
+
+    fmt = logging.Formatter(fmt=fmtstr, datefmt="%H:%M:%S")
 
     # Configure our logger with those handlers
     mlog.setLevel(logging.DEBUG)

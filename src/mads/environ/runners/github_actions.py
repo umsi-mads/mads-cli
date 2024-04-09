@@ -1,6 +1,7 @@
 """Information about the GitHub Actions environment."""
 
 import os
+from typing import ClassVar
 from pydantic import Field
 from .runner import Runner
 from pydantic_settings import SettingsConfigDict
@@ -23,6 +24,8 @@ class GitHubActions(Runner):
     repository: str = Field(..., alias="github_repository")
     repository_owner: str = ""
     run_attempt: int = 1
+
+    io_settings: ClassVar[dict] = {"force_terminal": False}
 
     @classmethod
     def detect(cls) -> bool:

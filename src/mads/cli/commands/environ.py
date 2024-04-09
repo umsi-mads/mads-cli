@@ -18,5 +18,6 @@ def register_subcommand(parser: argparse.ArgumentParser):
         p(environ.Docker())
         p(environ.Runner.current())
         p(environ.Resources())
+        p(environ.InOut())
 
     parser.set_defaults(func=run)
