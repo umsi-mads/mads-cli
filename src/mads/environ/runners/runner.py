@@ -5,7 +5,7 @@ For example, we could be running in a GitHub Action, a CodeBuild Build, or outsi
 CI runner entirely.
 """
 
-from typing import ClassVar
+from typing import ClassVar, Type
 from abc import ABC, abstractmethod
 from pydantic import field_validator
 from pydantic_settings import BaseSettings
@@ -49,7 +49,7 @@ class Runner(BaseSettings, ABC):
         Runner._runners.append(cls)
 
     @classproperty
-    def current(cls):
+    def current(cls) -> Type["Runner"]:
         """Return an instance of the current runner"""
         for runner in cls._runners:
             if runner.detect():

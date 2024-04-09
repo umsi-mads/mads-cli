@@ -1,6 +1,6 @@
 """Extend built-in python functionality"""
 
-from typing import Callable
+from typing import Callable, TypeVar
 
 
 class classproperty(property):
@@ -9,8 +9,8 @@ class classproperty(property):
     https://stackoverflow.com/a/13624858/1893290
     """
 
-    fget: Callable
-    fset: Callable
+    # fget: Callable
+    # fset: Callable
 
     def __get__(self, _, owner_cls):
         return self.fget(owner_cls)
