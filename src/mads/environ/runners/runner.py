@@ -6,13 +6,12 @@ CI runner entirely.
 """
 
 from typing import ClassVar, Type
-from abc import ABC, abstractmethod
 from pydantic import field_validator
 from pydantic_settings import BaseSettings
 from mads.lib.classproperty import classproperty
 
 
-class Runner(BaseSettings, ABC):
+class Runner(BaseSettings):
     """
     A Runner should tell us details about why this operation is running by pulling
     information from the environment.
@@ -41,7 +40,9 @@ class Runner(BaseSettings, ABC):
     def url(self) -> str | None:
         pass
 
-    _runners: ClassVar = []
+    _runners: ClassVar[list] = []
+
+    io_settings: ClassVar[dict] = {}
 
     # Save a list of all subclasses so we can detect which one we're running in
     def __init_subclass__(cls, /, **kwargs):
@@ -57,9 +58,9 @@ class Runner(BaseSettings, ABC):
         raise RuntimeError("Unable to detect runner")
 
     @classmethod
-    @abstractmethod
     def detect(cls) -> bool:
         """Detect if we're running in this class of runner"""
+        return False
 
     @field_validator("repo", "head_ref", "base_ref", mode="before")
     def must_be_name_only(cls, v: str) -> str | None:

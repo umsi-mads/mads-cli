@@ -1,3 +1,4 @@
+from .in_out import InOut
 from .git import Git
 from .resources import Resources
 from .runners.runner import Runner
@@ -8,4 +9,5 @@ __all__ = [
     "Resources",
     "Runner",
     "Docker",
+    "InOut",
 ]

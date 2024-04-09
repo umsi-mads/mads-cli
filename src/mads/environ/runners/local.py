@@ -1,7 +1,6 @@
 import time
 from pydantic import Field
 
-
 from mads.lib.path import current_repo
 from .runner import Runner
 
