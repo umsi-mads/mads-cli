@@ -11,7 +11,9 @@ def test_runner_selects_codebuild(env):
     assert Runner.current == CodeBuild
 
 
-def test_runner_selects_local():
+def test_runner_selects_local(env):
+    env.pop("GITHUB_ACTIONS", None)
+    env.pop("CODEBUILD_BUILD_ID", None)
     assert Runner.current == LocalRunner
 
 

@@ -1,5 +1,4 @@
 import time
-from pathlib import Path
 from pydantic import Field
 
 
@@ -14,7 +13,6 @@ class LocalRunner(Runner):
     repo: str = Field(default_factory=current_repo)
     run_id: str = Field(default_factory=lambda: str(int(time.time())))
     ref: str = "HEAD"
-    event: None = None
 
     @classmethod
     def detect(cls) -> bool:

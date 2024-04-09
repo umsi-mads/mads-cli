@@ -9,13 +9,18 @@ authors = [
 dependencies = [
   "boto3",
   "ghapi",
-  "pydantic<2",
+  "pydantic>=2",
+  "pydantic-settings",
   "psutil",
   "pyjwt",
   "ruamel.yaml",
   "cryptography",
   "rich",
 ]
+
+[project.optional-dependencies]
+test = ["pytest"]
+
 
 [project.scripts]
 mads = "mads.cli:main"

@@ -1,0 +1,35 @@
+name: Test
+
+on: push
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  test:
+    name: ✅ Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🐙 Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: 🐍 Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 📥 Install Package
+        shell: bash
+        run: |
+          set -x
+
+          pip install ".[test]"
+
+      - name: 📝 Run Tests
+        shell: bash
+        run: |
+          # Print info about the environment
+          mads environ
+
+          pytest

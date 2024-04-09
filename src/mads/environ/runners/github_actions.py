@@ -3,21 +3,24 @@
 import os
 from pydantic import Field
 from .runner import Runner
+from pydantic_settings import SettingsConfigDict
 
 
 class GitHubActions(Runner):
     """Information provided by GitHub Actions."""
 
+    model_config = SettingsConfigDict(env_prefix="github_")
+
     # Required fields that differ from parent class
     name: str = "github"
-    repo: str = Field(env="github_repository")
-    ref: str = Field(env="github_ref_name")
-    event: str = Field(env="github_event_name")
+    repo: str = Field(..., alias="github_repository")
+    ref: str = Field(..., alias="github_ref_name")
+    event: str = Field(..., alias="github_event_name")
 
     # Optional fields that differ from parent class
     actions: bool = False
     actor: str = ""
-    repository: str = ""
+    repository: str = Field(..., alias="github_repository")
     repository_owner: str = ""
     run_attempt: int = 1
 
@@ -35,9 +38,3 @@ class GitHubActions(Runner):
             f"https://github.com/{self.repository}/actions/runs"
             f"/{self.run_id}/attempts/{self.run_attempt}"
         )
-
-    class Config:
-        """Change behavior of the github config class"""
-
-        # When loading in values from the environment, they will all be prefixed
-        env_prefix = "github_"

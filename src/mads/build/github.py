@@ -97,7 +97,7 @@ def install(token: str):
     with open(creds, "a") as f:
         f.write(f"https://x-access-token:{token}@github.com\n")
 
-    shell(f"git config --global credential.helper store")
+    shell("git config --global credential.helper store")
 
     log.warning("Installed GitHub token to ~/.git-credentials")
 
