@@ -4,17 +4,21 @@ import os
 from typing import Union
 
 from pydantic import Field
+from pydantic_settings import SettingsConfigDict
+
 from .runner import Runner
 
 
 class CodeBuild(Runner):
     """Information provided by Codebuild."""
 
+    model_config = SettingsConfigDict(env_prefix="codebuild_")
+
     # Required fields that differ from parent class
     name: str = "codebuild"
-    repo: str = Field(env="codebuild_source_repo_url")
-    run_id: str = Field(env="codebuild_build_id")
-    ref: str = Field(env="codebuild_source_version")
+    repo: str = Field(alias="codebuild_source_repo_url")
+    run_id: str = Field(alias="codebuild_build_id")
+    ref: str = Field(alias="codebuild_source_version")
 
     # Optional fields that differ from parent class
     initiator: str = ""
@@ -77,9 +81,3 @@ class CodeBuild(Runner):
             return self.head_ref
 
         return None
-
-    class Config:
-        """Change behavior of the codebuild config class"""
-
-        # When loading in values from the environment, they will all be prefixed
-        env_prefix = "codebuild_"

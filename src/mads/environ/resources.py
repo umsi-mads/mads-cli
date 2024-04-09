@@ -3,7 +3,8 @@
 import platform
 import psutil
 from subprocess import CalledProcessError
-from pydantic import BaseSettings, Field
+from pydantic import Field
+from pydantic_settings import BaseSettings
 
 from mads.build import log, shell
 
@@ -37,6 +38,10 @@ class Resources(BaseSettings):
 
     def enable_swap(self):
         """Enable swap memory."""
+
+        if self.swap_memory > 0:
+            log.info("Swap memory is already enabled.")
+            return True
 
         try:
             # Create a swap file that is half the size of the available storage.

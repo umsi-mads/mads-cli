@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
-from pydantic import BaseSettings, Field
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 def config_dir():
@@ -9,6 +10,10 @@ def config_dir():
 
 
 class Docker(BaseSettings):
+    """Detect how we should interact with Docker."""
+
+    model_config = SettingsConfigDict(env_prefix="docker_")
+
     # Are we using buildkit buildx?
     buildx: bool = Field(
         default_factory=lambda: config_dir()
@@ -17,8 +22,5 @@ class Docker(BaseSettings):
     )
 
     # Environment config
-    cache_to: Path | None
-    cache_from: Path | None
-
-    class Config:
-        env_prefix = "DOCKER_"
+    cache_to: Path | None = None
+    cache_from: Path | None = None

@@ -5,8 +5,10 @@ For example, we could be running in a GitHub Action, a CodeBuild Build, or outsi
 CI runner entirely.
 """
 
+from typing import ClassVar
 from abc import ABC, abstractmethod
-from pydantic import BaseSettings, validator
+from pydantic import field_validator
+from pydantic_settings import BaseSettings
 from mads.lib.classproperty import classproperty
 
 
@@ -39,7 +41,7 @@ class Runner(BaseSettings, ABC):
     def url(self) -> str | None:
         pass
 
-    _runners = []
+    _runners: ClassVar = []
 
     # Save a list of all subclasses so we can detect which one we're running in
     def __init_subclass__(cls, /, **kwargs):
@@ -59,7 +61,7 @@ class Runner(BaseSettings, ABC):
     def detect(cls) -> bool:
         """Detect if we're running in this class of runner"""
 
-    @validator("repo", "head_ref", "base_ref", pre=True)
+    @field_validator("repo", "head_ref", "base_ref", mode="before")
     def must_be_name_only(cls, v: str) -> str | None:
         """These fields should be the name only, not a URL-like format"""
 
