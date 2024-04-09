@@ -13,7 +13,7 @@ def register_subcommand(parser: argparse.ArgumentParser):
     def run(args):
         """Run the query"""
 
-        p = partial(pprint, indent_guides=False)
+        p = partial(pprint, indent_guides=False, expand_all=True)
         p(environ.Git())
         p(environ.Docker())
         p(environ.Runner.current())
