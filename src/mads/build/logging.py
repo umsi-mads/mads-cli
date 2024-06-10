@@ -167,7 +167,7 @@ def new_logger() -> BuildLogger:
         fmtstr = "%(message)s"
         handlers.append(RichHandler(console=console, show_level=False, show_path=False))
     else:
-        handlers.append(logging.StreamHandler(sys.stdout))
+        handlers.append(logging.StreamHandler(sys.stderr))
 
     fmt = logging.Formatter(fmt=fmtstr, datefmt="%H:%M:%S")
 
