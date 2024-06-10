@@ -16,16 +16,21 @@ class InOut(BaseSettings):
 
     term: str | None = None
     force_terminal: bool | None = None
+    shlvl: int | None = None
 
     @computed_field
     def is_terminal(self) -> bool:
         if self.force_terminal is not None:
             return self.force_terminal
-        return self.is_atty
+        return bool(self.is_atty or self.is_subshell)
 
     @computed_field
     def is_atty(self) -> bool:
         return sys.stdout.isatty()
+
+    @computed_field
+    def is_subshell(self) -> bool:
+        return self.shlvl is not None and self.shlvl > 1
 
     @computed_field
     def is_interactive(self) -> bool:
@@ -40,6 +45,7 @@ class InOut(BaseSettings):
         yield "is_terminal", self.is_terminal
         yield "force_terminal", self.force_terminal, None
         yield "is_atty", self.is_atty, True
+        yield "is_subshell", self.is_subshell
         yield "is_interactive", self.is_interactive
 
     @classmethod
