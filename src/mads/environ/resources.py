@@ -6,8 +6,6 @@ from subprocess import CalledProcessError
 from pydantic import Field
 from pydantic_settings import BaseSettings
 
-from mads.build import log, shell
-
 
 class Resources(BaseSettings):
     """Get information about the current system we're running in."""
@@ -38,6 +36,8 @@ class Resources(BaseSettings):
 
     def enable_swap(self):
         """Enable swap memory."""
+
+        from mads.build import log, shell
 
         if self.swap_memory > 0:
             log.info("Swap memory is already enabled.")

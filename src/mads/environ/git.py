@@ -6,13 +6,14 @@ from functools import cache
 
 from pydantic_settings import BaseSettings
 
-from mads.build.shell import shell
 
 NOT_GIT = {"message": "[This does not appear to be a git project]"}
 
 
 @cache
 def git_config_source() -> dict[str, str]:
+    from mads.build.shell import shell
+
     cwd = Path(".git")
 
     # If the git cache is populated, .git is actually a file pointing to the
