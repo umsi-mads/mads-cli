@@ -60,27 +60,33 @@ def _stream_process(cmd, **kwargs):
         cmd,
         encoding="utf-8",
         stdin=subprocess.PIPE if "input" in kwargs else subprocess.DEVNULL,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+        stdout=kwargs.get("stdout", subprocess.PIPE),
+        stderr=kwargs.get("stderr", subprocess.PIPE),
         shell=True,
         cwd=kwargs.get("cwd"),
     ) as process:
-        stdout = ""
-        stderr = ""
 
-        if kwargs.get("input"):
-            process.stdin.write(kwargs["input"])
-            process.stdin.close()
+        # Configure the IO/streams
+        if process.stdin:
+            if kwargs.get("input"):
+                process.stdin.write(kwargs["input"])
+                process.stdin.close()
 
         # Don't block on stdout/stderr
-        os.set_blocking(process.stdout.fileno(), False)
-        os.set_blocking(process.stderr.fileno(), False)
+        if process.stdout:
+            os.set_blocking(process.stdout.fileno(), False)
+        if process.stderr:
+            os.set_blocking(process.stderr.fileno(), False)
+
+        # Collect the output streams
+        stdout = ""
+        stderr = ""
 
         def communicate(proc):
             """Read stdin and stdout from a process as streams."""
             nonlocal stdout, stderr
 
-            outputs = [proc.stdout, proc.stderr]
+            outputs = list(filter(None, [proc.stdout, proc.stderr]))
 
             # Select will return a list of only files ready to read from
             ready, _, _ = select.select(outputs, [], [], 0.0001)
