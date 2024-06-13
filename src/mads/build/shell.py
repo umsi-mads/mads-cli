@@ -17,10 +17,10 @@ from .logging import LSS_END
 BUILD_ROOT = Path(".").resolve()
 
 
-def shell(cmd: str, raise_on_error: bool = True, **kwargs) -> str:
+def shell(cmd: str, raise_on_error: bool = True, silent: bool = False, **kwargs) -> str:
     """Run a command and return a string of it's output."""
 
-    res = proc(cmd, **kwargs)
+    res = proc(cmd, silent, **kwargs)
 
     # We're usually requiring processes to exit successfully.
     if raise_on_error:
@@ -29,7 +29,7 @@ def shell(cmd: str, raise_on_error: bool = True, **kwargs) -> str:
     return res.stdout.decode("utf-8").strip()
 
 
-def proc(cmd: str, **kwargs) -> subprocess.CompletedProcess:
+def proc(cmd: str, silent: bool = True, **kwargs) -> subprocess.CompletedProcess:
     """Like shell, but return the process object."""
 
     # Prepare the command to be printed
@@ -37,25 +37,30 @@ def proc(cmd: str, **kwargs) -> subprocess.CompletedProcess:
     if "cwd" in kwargs:
         printdir = str(kwargs["cwd"]).replace(str(BUILD_ROOT), ".")
         printcmd = f"cd {printdir} && {cmd}"
-    log.info("[shell] %s", printcmd)
-    log.indent()
+    if not silent:
+        log.info("[shell] %s", printcmd)
+        log.indent()
 
     # Run the process
     start = time.time()
-    res = _stream_process(cmd, **kwargs)
+    res = _stream_process(cmd, silent, **kwargs)
     delta = time.time() - start
 
     # Close out the logging indent.
-    log.outdent()
-    log.info(
-        "%s Completed with code %s after %0.2f seconds", LSS_END, res.returncode, delta
-    )
-    log.info("")
+    if not silent:
+        log.outdent()
+        log.info(
+            "%s Completed with code %s after %0.2f seconds",
+            LSS_END,
+            res.returncode,
+            delta,
+        )
+        log.info("")
 
     return res
 
 
-def _stream_process(cmd, **kwargs):
+def _stream_process(cmd: str, silent: bool, **kwargs):
     with subprocess.Popen(
         cmd,
         encoding="utf-8",
@@ -82,6 +87,11 @@ def _stream_process(cmd, **kwargs):
         stdout = ""
         stderr = ""
 
+        def noop(*_):
+            pass
+
+        log_fn = log.info if not silent else noop
+
         def communicate(proc):
             """Read stdin and stdout from a process as streams."""
             nonlocal stdout, stderr
@@ -94,10 +104,10 @@ def _stream_process(cmd, **kwargs):
                 lines = [line.rstrip() for line in stream.readlines()]
                 for line in lines:
                     if stream == process.stdout:
-                        log.info("  %s", line)
+                        log_fn("  %s", line)
                         stdout += line + "\n"
                     else:
-                        log.info("* %s", line)
+                        log_fn("* %s", line)
                         stderr += line + "\n"
 
         # While the process is alive, read it's output streams
