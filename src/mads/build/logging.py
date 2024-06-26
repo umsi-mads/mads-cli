@@ -8,6 +8,7 @@ import logging
 from typing import List, Union
 from pathlib import Path
 from datetime import datetime, timedelta
+from contextlib import contextmanager
 
 from mads.environ import InOut
 
@@ -62,6 +63,14 @@ class BuildLogger(logging.LoggerAdapter):
     def outdent(self):
         """Decrease the indent"""
         self._indent.pop(-1)
+
+    @contextmanager
+    def an_indent(self, char: str = "│"):
+        """Increase the indent using a with block"""
+        self.indent(char)
+        yield
+        self.outdent()
+        self.info("")
 
     def tree(
         self,
