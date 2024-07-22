@@ -20,6 +20,18 @@ def kebab(str) -> str:
     return str.replace("_", "-")
 
 
+def has_parent_type(subject, parent):
+    """Check if a class has a parent class"""
+
+    if parent in getattr(subject, "__bases__", []):
+        return subject
+
+    if isinstance(subject, UnionType):
+        return next(has_parent_type(subtype, parent) for subtype in subject.__args__)
+
+    return None
+
+
 def command(subparsers: argparse._SubParsersAction):
     """
     Decorator to register a function as a command
@@ -81,8 +93,9 @@ def command(subparsers: argparse._SubParsersAction):
                     # If using store_true or store_false, a type is not allowed
                     parserargs.pop("type", None)
 
-                if Enum in getattr(annotation, "__bases__", []):
-                    parserargs["choices"] = [e.value for e in annotation]
+                if enum := has_parent_type(annotation, Enum):
+                    # If the annotation is an Enum, set the choices to the enum values
+                    parserargs["choices"] = [e.value for e in enum]
 
             sub.add_argument(parserargs.pop("dest"), **parserargs)
         return sub
