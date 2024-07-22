@@ -5,6 +5,7 @@ The argument parser for the CLI -- The entrypoint API
 import sys
 import argparse
 from importlib import metadata
+import traceback
 
 from . import commands
 
@@ -67,8 +68,11 @@ for entrypoint in metadata.entry_points(group="mads_cli"):
     try:
         mod = entrypoint.load()
         register_module_as_subcommand(name, mod, subcommands)
-    except Exception as err:
-        print(f"Problem importing entrypoint {entrypoint}: {err}", file=sys.stderr)
+    except Exception:
+        print(f"Problem importing {entrypoint}:", file=sys.stderr)
+        tb = traceback.format_exc(limit=-1)
+        # Indent the traceback
+        print("  ".join(tb.splitlines(True)[1:]), file=sys.stderr)
         continue
 
 # Load all the built in commands
