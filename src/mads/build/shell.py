@@ -61,14 +61,16 @@ def proc(cmd: str, silent: bool = True, **kwargs) -> subprocess.CompletedProcess
 
 
 def _stream_process(cmd: str, silent: bool, **kwargs):
+
+    kwargs.setdefault("encoding", "utf-8")
+    kwargs.setdefault("shell", True)
+    kwargs.setdefault("stdout", subprocess.PIPE)
+    kwargs.setdefault("stderr", subprocess.PIPE)
+
     with subprocess.Popen(
         cmd,
-        encoding="utf-8",
         stdin=subprocess.PIPE if "input" in kwargs else subprocess.DEVNULL,
-        stdout=kwargs.get("stdout", subprocess.PIPE),
-        stderr=kwargs.get("stderr", subprocess.PIPE),
-        shell=True,
-        cwd=kwargs.get("cwd"),
+        **kwargs,
     ) as process:
 
         # Configure the IO/streams
