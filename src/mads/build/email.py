@@ -27,6 +27,8 @@ def strip_html(string):
         .replace("<br/>", "\n")
         .replace("</li>", "\n")
         .replace("</p>", "\n")
+        .replace("<code>", "`")
+        .replace("</code>", "`")
     )
 
     # Don't allow double blank lines
