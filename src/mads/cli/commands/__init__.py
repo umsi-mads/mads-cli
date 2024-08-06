@@ -8,6 +8,7 @@ from . import (
     github,
     kube,
     setup,
+    tag,
     yq,
 )
 
@@ -17,5 +18,6 @@ __all__ = [
     "github",
     "kube",
     "setup",
+    "tag",
     "yq",
 ]

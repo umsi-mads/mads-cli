@@ -45,7 +45,7 @@ def git_config_source() -> dict[str, str]:
 
     try:
         # Given a commit hash, it should always be easy to get the contents
-        data = shell(f"git show -s --format='%s;;;%ae' {config['commit']}")
+        data = shell(f"git show -s --format='%s;;;%ae' {config['commit']}", silent=True)
         config["message"], config["author"] = data.split(";;;")
     except (CalledProcessError, KeyError, ValueError):
         pass
@@ -62,5 +62,31 @@ class Git(BaseSettings):
     branch: str | None = None
 
     @classmethod
-    def settings_customise_sources(cls, *args, **kwargs) -> tuple:
-        return (git_config_source,)
+    def settings_customise_sources(cls, *args, init_settings, **kwargs) -> tuple:
+        return (init_settings, git_config_source)
+
+    def artifact_tag(
+        self,
+        *prefix: str,
+        use_branch: bool = False,
+        default: str = "dev",
+    ) -> str:
+        """
+        Use the git status to determine the tag we should be using
+        """
+
+        bits = [*prefix] if prefix else []
+
+        if not self.branch:
+            bits.append(default)
+        elif self.branch in ["master", "main"]:
+            if not prefix:
+                bits.append(self.branch if use_branch else "latest")
+        elif self.branch in ["beta"]:
+            bits.append(self.branch if use_branch else "beta")
+        elif use_branch:
+            bits.append(self.branch)
+        else:
+            bits.append(default)
+
+        return "-".join(bits)
