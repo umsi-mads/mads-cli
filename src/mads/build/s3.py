@@ -64,3 +64,7 @@ def presign(
 
 def read_key(bucket: str, key: str) -> str:
     return s3.get_object(Bucket=bucket, Key=key)["Body"].read().decode()
+
+
+def head(bucket: str, key: str) -> dict:
+    return s3.head_object(Bucket=bucket, Key=key)
