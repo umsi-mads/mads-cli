@@ -1,6 +1,7 @@
 """Information about the GitHub Actions environment."""
 
 import os
+import logging
 from typing import ClassVar
 from pydantic import Field
 from .runner import Runner
@@ -25,7 +26,10 @@ class GitHubActions(Runner):
     repository_owner: str = ""
     run_attempt: int = 1
 
-    io_settings: ClassVar[dict] = {"force_terminal": False}
+    io_settings: ClassVar[dict] = {
+        "force_terminal": False,
+        "log_level": logging.DEBUG if os.environ.get("RUNNER_DEBUG") else logging.INFO,
+    }
 
     @classmethod
     def detect(cls) -> bool:
