@@ -1,7 +1,7 @@
 """Helpers for interacting with Docker"""
 
 import argparse
-from mads.cli.command import command, die
+from mads.cli.command import command, die, set_output
 
 
 def register_subcommand(parser: argparse.ArgumentParser):
@@ -33,6 +33,16 @@ def register_subcommand(parser: argparse.ArgumentParser):
         from mads.build import docker
 
         docker.try_pull(image_name, tag)
+
+    @command(dockercmd)
+    def pull_first(image_name: str, *tags: str):
+        """Pull the first available image from the list"""
+
+        from mads.build import docker
+
+        result = docker.pull_first(image_name, *tags)
+        if result:
+            set_output(pulled=result)
 
     @command(dockercmd)
     def tag(use_branch: bool = False, default: str = "dev"):

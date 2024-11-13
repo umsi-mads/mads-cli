@@ -7,6 +7,7 @@ import base64
 import boto3
 from mads.environ import Git, Runner
 from .shell import proc
+from .ecr import get_image_tags
 
 
 def host() -> str:
@@ -75,6 +76,28 @@ def try_pull(image_name: str, tag: str) -> bool:
         raise RuntimeError(f"Unable to tag the latest image as :{tag}")
 
     return True
+
+
+def pull_first(image_name: str, *tags: str) -> str | bool:
+    """
+    Try pulling specified tags until one is found.
+    Returns false if none were found.
+    """
+
+    repo = image_name.split("/")[-1]
+    all_tags = get_image_tags(repo)
+
+    for tag in tags:
+        if tag not in all_tags:
+            continue
+
+        result = proc(f"docker pull {image_name}:{tag}")
+        if result.returncode == 0:
+            return f"{image_name}:{tag}"
+        else:
+            return False
+
+    return False
 
 
 def determine_tag(*, use_branch: bool = False, default: str = "dev") -> str:
