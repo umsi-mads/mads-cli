@@ -1,4 +1,5 @@
 import sys
+import logging
 from pydantic import computed_field
 from pydantic_settings import BaseSettings
 from .runners import Runner
@@ -17,7 +18,7 @@ class InOut(BaseSettings):
     term: str | None = None
     force_terminal: bool | None = None
     shlvl: int | None = None
-    log_level: int | None = None
+    log_level: int = logging.INFO
 
     @computed_field
     def is_terminal(self) -> bool:
@@ -48,7 +49,7 @@ class InOut(BaseSettings):
         yield "is_atty", self.is_atty, True
         yield "is_subshell", self.is_subshell
         yield "is_interactive", self.is_interactive
-        yield "log_level", self.log_level, None
+        yield "log_level", logging.getLevelName(self.log_level)
 
     @classmethod
     def settings_customise_sources(cls, *args, env_settings, **kwargs) -> tuple:

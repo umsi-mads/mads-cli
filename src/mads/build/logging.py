@@ -22,9 +22,7 @@ console = None
 
 if io.is_terminal:
     from rich.logging import RichHandler
-    from rich.console import Console
-
-    console = Console(stderr=True)
+    from mads.console import console
 
 
 class BuildLogger(logging.LoggerAdapter):
@@ -181,10 +179,10 @@ def new_logger() -> BuildLogger:
     fmt = logging.Formatter(fmt=fmtstr, datefmt="%H:%M:%S")
 
     # Configure our logger with those handlers
-    mlog.setLevel(logging.DEBUG)
+    mlog.setLevel(io.log_level)
     for out in handlers:
         out.setFormatter(fmt)
-        out.setLevel(logging.DEBUG)
+        out.setLevel(io.log_level)
         mlog.addHandler(out)
 
     return BuildLogger(mlog)
