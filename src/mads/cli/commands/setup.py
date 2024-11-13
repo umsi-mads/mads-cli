@@ -18,7 +18,7 @@ def register_subcommand(parser: argparse.ArgumentParser):
 
         url = f"git+https://github.com/umsi-mads/{repo_name}.git"
         branch_url = f"{url}@{branch}"
-        branch_install = proc(f"pip install {branch_url}")
+        branch_install = proc(f"pip install --no-cache-dir {branch_url}")
 
         if branch != "main" and branch_install.returncode != 0:
             print(
