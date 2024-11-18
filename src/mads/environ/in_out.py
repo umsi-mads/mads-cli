@@ -1,6 +1,7 @@
 import sys
 import logging
-from pydantic import computed_field
+from typing import Any
+from pydantic import computed_field, field_validator
 from pydantic_settings import BaseSettings
 from .runners import Runner
 
@@ -19,6 +20,17 @@ class InOut(BaseSettings):
     force_terminal: bool | None = None
     shlvl: int | None = None
     log_level: int = logging.INFO
+
+    @field_validator("log_level", mode="before")
+    def validate_log_level(cls, v: Any):
+
+        if isinstance(v, str):
+            if v.isnumeric():
+                v = int(v)
+            else:
+                v = logging.getLevelName(v)
+
+        return v
 
     @computed_field
     def is_terminal(self) -> bool:
