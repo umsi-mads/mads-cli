@@ -2,9 +2,11 @@
 Configure logging for the build and define helper functions.
 """
 
+import os
 import sys
 import time
 import logging
+import hashlib
 from typing import List, Union
 from pathlib import Path
 from datetime import datetime, timedelta
@@ -76,6 +78,8 @@ class BuildLogger(logging.LoggerAdapter):
         *,
         size: bool = True,
         mtime: bool = False,
+        hash: bool = False,
+        hidden: bool = False,
     ):
         """Print the file tree starting at the given directory."""
 
@@ -90,6 +94,9 @@ class BuildLogger(logging.LoggerAdapter):
             children.sort(key=lambda x: (not x.is_file(), x.name))
 
             for child in children:
+                if child.name.startswith(".") and not hidden:
+                    continue
+
                 if child.name in [".git", "build", ".pytest_cache", "__pycache__"]:
                     self.info("%s -- skipping contents for brevity", child.name)
                     continue
@@ -107,10 +114,20 @@ class BuildLogger(logging.LoggerAdapter):
                     else:
                         mtimestr = None
 
-                    if sizestr or mtimestr:
-                        suffix = (
-                            " (" + ", ".join(filter(None, [sizestr, mtimestr])) + ")"
-                        )
+                    if hash:
+                        try:
+                            hashstr = hashlib.blake2b(
+                                child.read_bytes(), digest_size=4
+                            ).hexdigest()
+                        except FileNotFoundError:
+                            hashstr = None
+                    else:
+                        hashstr = None
+
+                    attrs = [sizestr, mtimestr, hashstr]
+
+                    if any(attrs):
+                        suffix = " (" + ", ".join(filter(None, attrs)) + ")"
                     else:
                         suffix = ""
 
@@ -129,6 +146,16 @@ class BuildLogger(logging.LoggerAdapter):
             self.outdent()
 
         _tree(root)
+        self.info("")
+
+    def environ(self):
+        """Print the available environment variables."""
+
+        self.info("[environment]")
+        self.indent(" ")
+        for key, val in sorted(os.environ.items()):
+            self.info(f"{key}={val}")
+        self.outdent()
         self.info("")
 
     def report_runtime(self, func):
