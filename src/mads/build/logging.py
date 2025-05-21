@@ -163,18 +163,18 @@ class BuildLogger(logging.LoggerAdapter):
 
         def wrapper(*args, **kwargs):
             name = func.__name__
-            self.info("%s Starting function %s", LSS_START, name)
+            self.debug("%s Starting function %s", LSS_START, name)
             self.indent()
-            self.info("")
+            self.debug("")
             start = time.time()
             res = func(*args, **kwargs)
             delta = time.time() - start
-            self.info("")
+            self.debug("")
             self.outdent()
-            self.info(
+            self.debug(
                 "%s Completed function %s after %0.2f seconds", LSS_END, name, delta
             )
-            self.info("")
+            self.debug("")
             return res
 
         return wrapper
