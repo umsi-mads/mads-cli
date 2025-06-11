@@ -64,6 +64,18 @@ class BuildLogger(logging.LoggerAdapter):
         """Decrease the indent"""
         self._indent.pop(-1)
 
+    def start(self, msg: str, *args, **kwargs):
+        """Begin a section of the log with special indentation."""
+
+        self.log(logging.INFO, "%s " + msg, LSS_START, *args, **kwargs)
+        self.indent()
+
+    def end(self, msg: str = "", *args, **kwargs):
+        """End a section of the log with special indentation."""
+
+        self.outdent()
+        self.log(logging.INFO, "%s " + msg, LSS_END, *args, **kwargs)
+
     @contextmanager
     def an_indent(self, char: str = "│"):
         """Increase the indent using a with block"""
