@@ -205,6 +205,9 @@ def new_logger() -> BuildLogger:
     # Add a null handler to prevent it from being populated automatically
     root.addHandler(logging.NullHandler())
 
+    # Prevent the root logger from propagating to the mads logger
+    mlog.propagate = False
+
     # Set up the handlers we want to use
     handlers: list[logging.Handler] = []
 
