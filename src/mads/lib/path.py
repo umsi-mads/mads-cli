@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Generator
 
 
 def find_upwards(name: str) -> Path | None:
@@ -71,6 +72,13 @@ class PathFinder:
                 return path
 
         return None
+
+    def glob(self, pattern: str) -> Generator[Path, None, None]:
+        """Find files matching a glob pattern across all paths"""
+
+        for path in self.paths:
+            for file in path.glob(pattern):
+                yield file
 
     def __truediv__(self, other: str) -> Path:
         """Find files as if the finder was a Path: finder / 'file.txt'"""
