@@ -84,3 +84,17 @@ class PathFinder:
         """Find files as if the finder was a Path: finder / 'file.txt'"""
 
         return self.find(other)
+
+
+assets = PathFinder(
+    [
+        "./assets/",
+        "./data/",
+        "./",
+        "/voc/data/",
+        "/voc/course/public/data/",
+        "/voc/course/public/assets/",
+        "/home/jovyan/assets/",
+        "/home/jovyan/data/",
+    ]
+)
