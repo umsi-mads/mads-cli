@@ -91,6 +91,7 @@ assets = PathFinder(
         "./assets/",
         "./data/",
         "./",
+        "/voc/coursework",
         "/voc/data/",
         "/voc/course/public/data/",
         "/voc/course/public/assets/",
