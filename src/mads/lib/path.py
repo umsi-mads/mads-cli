@@ -88,14 +88,17 @@ class PathFinder:
 
 assets = PathFinder(
     [
-        "./assets/",
-        "./data/",
+        "./assets",
+        "./data",
         "./",
+        "/voc/work",
         "/voc/coursework",
-        "/voc/data/",
-        "/voc/course/public/data/",
-        "/voc/course/public/assets/",
-        "/home/jovyan/assets/",
-        "/home/jovyan/data/",
+        "/voc/data",
+        "/voc/course/public/data",
+        "/voc/course/public/assets",
+        "/voc/course/public",
+        "/home/jovyan/assets",
+        "/home/jovyan/data",
+        "/home/jovyan/work",
     ]
 )
