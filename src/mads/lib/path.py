@@ -69,7 +69,7 @@ class PathFinder:
         for path in self.paths:
             path = path.joinpath(name)
             if path.exists():
-                return path
+                return path.absolute()
 
         return None
 
