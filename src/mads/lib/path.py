@@ -88,9 +88,9 @@ class PathFinder:
 
 assets = PathFinder(
     [
+        "./",
         "./assets",
         "./data",
-        "./",
         "/voc/work",
         "/voc/coursework",
         "/voc/data",
