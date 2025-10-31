@@ -101,5 +101,7 @@ assets = PathFinder(
         "/home/jovyan/assets",
         "/home/jovyan/data",
         "/home/jovyan/work",
+        "/home/jovyan/work/assignments",
+        "/home/jovyan/work/assignments/assets",
     ]
 )
