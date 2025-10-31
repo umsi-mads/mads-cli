@@ -60,7 +60,7 @@ class PathFinder:
 
         raise FileNotFoundError(
             f"Could not find '{name}'. Searched within the following paths:\n"
-            + "\n".join(["  - " + str(p) for p in self.paths])
+            + "\n".join(["  - " + str(p.resolve()) for p in self.paths])
         )
 
     def get(self, name: str) -> Path | None:
