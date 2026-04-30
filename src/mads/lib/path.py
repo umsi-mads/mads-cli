@@ -68,8 +68,11 @@ class PathFinder:
 
         for path in self.paths:
             path = path.joinpath(name)
-            if path.exists():
-                return path.absolute()
+            try:
+                if path.exists():
+                    return path.absolute()
+            except PermissionError:
+                pass
 
         return None
 
